@@ -1,0 +1,138 @@
+# Visual Studio / .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build artifacts
+[Bb]in/
+[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
+*.dll
+*.exe
+*.app
+*.appx
+*.msix
+*.msixbundle
+*.nupkg
+*.snupkg
+*.pdb
+*.ipdb
+*.ilk
+*.log
+*.vsix
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# IIS Express
+/.vs/**
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+
+# Build results
+*.builds
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Local build directories
+**/bin/
+**/obj/
+
+# ASP.NET temporary files
+Generated
+testhost*.dll
+
+# Dependency directories
+node_modules/
+wwwroot/lib/
+
+# Logs
+*.log
+
+# Coverage
+*.coverage
+*.coveragexml
+coverage.*
+
+# Resharper
+_ReSharper*
+*.DotSettings.user
+
+# Dotnet watch
+.dotnetwatch/
+
+# Entity Framework
+*.dbmdl
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Local AppData
+*.local
+
+# to avoid checking in generated files
+*.g.cs
+*.g.i.cs
+*.generated.cs
+
+# Ignore publish output
+publish/
+
+# Rider local history
+.idea/.idea
+
+# Ignore user secrets file
+secrets.json
+appsettings.Development.json
+
+# Ignore test results
+TestResults/
+*/TestResults/
+
+# Ignore package managers
+packages/
+
+# Ignore local tools
+.tool/ 
+
+# Ignore VS global packages
+.nuget/packages/
+
+# Ignore JetBrains logs
+.idea/**/workspace.xml
