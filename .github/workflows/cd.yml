@@ -67,61 +67,60 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  deploy-vm:
-    name: Deploy to VM
-    runs-on: [self-hosted, apc-vm]
+  deploy-dev:
+    name: Deploy to AKS (dev)
+    runs-on: ubuntu-latest
     needs: build-test-push
+    environment: dev
     env:
       IMAGE_TAG: ${{ needs.build-test-push.outputs.image_tag }}
     steps:
-      - name: Deploy with health check and rollback
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group rg-apc-learn --name aks-apc --admin --overwrite-existing
+
+      - name: Roll out new image
         run: |
-          set -e
-          ACR_LOGIN_SERVER="${{ vars.ACR_LOGIN_SERVER }}"
-          ACR_NAME="${ACR_LOGIN_SERVER%%.*}"
-          IMAGE_NAME="${{ env.IMAGE_NAME }}"
-          NEW_TAG="$IMAGE_TAG"
-          CONTAINER_NAME="apc-api"
-          PREV_TAG_FILE="$HOME/current_tag.txt"
+          kubectl set image deployment/apc-api apc-api="${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" -n apc-dev
+          kubectl rollout status deployment/apc-api -n apc-dev --timeout=120s
 
-          az login --identity --output none
-          az acr login --name "$ACR_NAME" --output none
+      - name: Roll back on failure
+        if: failure()
+        run: |
+          kubectl rollout undo deployment/apc-api -n apc-dev
+          kubectl rollout status deployment/apc-api -n apc-dev --timeout=120s
 
-          docker pull "$ACR_LOGIN_SERVER/$IMAGE_NAME:$NEW_TAG"
+  deploy-prod:
+    name: Deploy to AKS (prod)
+    runs-on: ubuntu-latest
+    needs: [build-test-push, deploy-dev]
+    environment: production
+    env:
+      IMAGE_TAG: ${{ needs.build-test-push.outputs.image_tag }}
+    steps:
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-          PREV_TAG=""
-          if [ -f "$PREV_TAG_FILE" ]; then
-            PREV_TAG=$(cat "$PREV_TAG_FILE")
-          fi
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group rg-apc-learn --name aks-apc --admin --overwrite-existing
 
-          docker stop "$CONTAINER_NAME" 2>/dev/null || true
-          docker rm "$CONTAINER_NAME" 2>/dev/null || true
+      - name: Roll out new image
+        run: |
+          kubectl set image deployment/apc-api apc-api="${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" -n apc-prod
+          kubectl rollout status deployment/apc-api -n apc-prod --timeout=120s
 
-          docker run -d --name "$CONTAINER_NAME" -p 8080:8080 --restart unless-stopped \
-            "$ACR_LOGIN_SERVER/$IMAGE_NAME:$NEW_TAG"
-
-          echo "Waiting for health check..."
-          HEALTHY=false
-          for i in $(seq 1 10); do
-            sleep 3
-            if curl -sf http://localhost:8080/healthz > /dev/null; then
-              HEALTHY=true
-              break
-            fi
-          done
-
-          if [ "$HEALTHY" = "true" ]; then
-            echo "$NEW_TAG" > "$PREV_TAG_FILE"
-            echo "Deployment succeeded: $NEW_TAG"
-            docker image prune -f
-          else
-            echo "Health check failed, rolling back"
-            docker stop "$CONTAINER_NAME" || true
-            docker rm "$CONTAINER_NAME" || true
-            if [ -n "$PREV_TAG" ]; then
-              docker run -d --name "$CONTAINER_NAME" -p 8080:8080 --restart unless-stopped \
-                "$ACR_LOGIN_SERVER/$IMAGE_NAME:$PREV_TAG"
-              echo "Rolled back to $PREV_TAG"
-            fi
-            exit 1
-          fi
+      - name: Roll back on failure
+        if: failure()
+        run: |
+          kubectl rollout undo deployment/apc-api -n apc-prod
+          kubectl rollout status deployment/apc-api -n apc-prod --timeout=120s
