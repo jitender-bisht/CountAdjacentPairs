@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apc-api-config
+  namespace: apc-dev
+data:
+  ASPNETCORE_ENVIRONMENT: "Development"
