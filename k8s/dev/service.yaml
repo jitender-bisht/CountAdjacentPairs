@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: apc-api
+  namespace: apc-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: apc-api
+  ports:
+    - port: 80
+      targetPort: 8080
