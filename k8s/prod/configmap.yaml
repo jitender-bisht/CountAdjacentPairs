@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apc-api-config
+  namespace: apc-prod
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
