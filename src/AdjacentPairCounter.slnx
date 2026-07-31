@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AdjacentPairCounter.Api/AdjacentPairCounter.Api.csproj" />
+  <Project Path="AdjacentPairCounter.Application/AdjacentPairCounter.Application.csproj" />
+  <Project Path="AdjacentPairCounter.Domain/AdjacentPairCounter.Domain.csproj" />
+  <Project Path="AdjacentPairCounter.Tests/AdjacentPairCounter.Tests.csproj" Id="9ef3acfc-ff44-4b07-a5c6-d606df6fe1ca" />
+</Solution>

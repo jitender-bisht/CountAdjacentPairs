@@ -136,3 +136,6 @@ packages/
 
 # Ignore JetBrains logs
 .idea/**/workspace.xml
+
+# Claude Code local files
+.claude/
