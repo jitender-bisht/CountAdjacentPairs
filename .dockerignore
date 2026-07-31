@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/.vs/
+**/TestResults/
+.git/
+.github/
+.claude/
+*.md
+coverage/
+publish/
