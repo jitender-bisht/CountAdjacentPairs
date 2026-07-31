@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apc-api
+  namespace: apc-dev
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: apc-dev.172.168.206.73.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: apc-api
+                port:
+                  number: 80
