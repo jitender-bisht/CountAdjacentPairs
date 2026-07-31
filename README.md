@@ -4,7 +4,7 @@ A small .NET 10 Web API that counts consecutive, non-overlapping duplicate chara
 
 If you're here for the API itself, it's a clean-architecture solution under [`src/`](src/): `Api`, `Application`, `Domain`, and `Tests` projects. If you're here for the CI/CD setup, this README walks through exactly how it was built, in order, so you can replicate the same pattern in your own project — regardless of what the application actually does.
 
-For the reasoning behind each decision, see [docs/HLD.md](docs/HLD.md) (the big picture). For exact resource names, roles, and configuration values, see [docs/LLD.md](docs/LLD.md) (the detailed reference). This README is the "do it yourself, in order" guide.
+For the reasoning behind each decision, see [docs/HLD.md](docs/HLD.md) (the big picture). For exact resource names, roles, and configuration values, see [docs/LLD.md](docs/LLD.md) (the detailed reference). For every CLI command run to provision this, copy-pasteable, see [docs/PROVISIONING-COMMANDS.md](docs/PROVISIONING-COMMANDS.md). This README is the "do it yourself, in order" guide.
 
 ## Live environments
 
